@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Musical Tones and Ratios - Interactive Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+        }
+
+        .section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .interactive-panel {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+
+        .frequency-calculator {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .result-display {
+            background: #e8f4fd;
+            padding: 20px;
+            border-radius: 8px;
+            border: 2px solid #3498db;
+        }
+
+        .result-display h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .frequency-result {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 10px 0;
+        }
+
+        .ratio-display {
+            font-size: 1.2em;
+            color: #27ae60;
+            margin: 5px 0;
+        }
+
+        .intervals-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .intervals-table th, .intervals-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .intervals-table th {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+
+        .intervals-table tr:hover {
+            background: #f5f5f5;
+        }
+
+        .play-button {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .play-button:hover {
+            background: #219a52;
+        }
+
+        .play-button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .wave-visualization {
+            width: 100%;
+            height: 200px;
+            border: 2px solid #3498db;
+            border-radius: 8px;
+            background: #f8f9fa;
+            margin: 20px 0;
+        }
+
+        .explanation-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .explanation-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .formula {
+            background: #2c3e50;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+
+        @media (max-width: 768px) {
+            .frequency-calculator {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎵 Musical Tones & Ratios</h1>
+            <p>Discover how mathematical ratios create beautiful musical intervals</p>
+        </div>
+
+        <div class="content">
+            <!-- Introduction Section -->
+            <div class="section">
+                <h2>Understanding Musical Ratios</h2>
+                <p>Music is mathematics in motion! Every musical interval can be expressed as a simple ratio between frequencies. When two notes have frequencies in simple ratios like 2:1, 3:2, or 4:3, they create harmonious sounds that are pleasing to the ear.</p>
+                
+                <div class="explanation-box">
+                    <h4>🔍 Key Concept</h4>
+                    <p>When you double a frequency (ratio 2:1), you get the same note one octave higher. A ratio of 3:2 creates a perfect fifth, and 4:3 creates a perfect fourth. These simple ratios are the foundation of Western music theory!</p>
+                </div>
+            </div>
+
+            <!-- Interactive Calculator -->
+            <div class="section">
+                <h2>Interactive Frequency Calculator</h2>
+                <div class="interactive-panel">
+                    <div class="frequency-calculator">
+                        <div>
+                            <div class="input-group">
+                                <label for="baseFreq">Base Frequency (Hz):</label>
+                                <input type="number" id="baseFreq" value="440" min="20" max="20000" step="0.1">
+                            </div>
+                            
+                            <div class="input-group">
+                                <label for="intervalSelect">Select Interval:</label>
+                                <select id="intervalSelect">
+                                    <option value="1:1">Unison (1:1)</option>
+                                    <option value="16:15">Minor Second (16:15)</option>
+                                    <option value="9:8">Major Second (9:8)</option>
+                                    <option value="6:5">Minor Third (6:5)</option>
+                                    <option value="5:4">Major Third (5:4)</option>
+                                    <option value="4:3">Perfect Fourth (4:3)</option>
+                                    <option value="7:5">Tritone (7:5)</option>
+                                    <option value="3:2" selected>Perfect Fifth (3:2)</option>
+                                    <option value="8:5">Minor Sixth (8:5)</option>
+                                    <option value="5:3">Major Sixth (5:3)</option>
+                                    <option value="9:5">Minor Seventh (9:5)</option>
+                                    <option value="15:8">Major Seventh (15:8)</option>
+                                    <option value="2:1">Octave (2:1)</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="customRatio">Or Enter Custom Ratio:</label>
+                                <input type="text" id="customRatio" placeholder="e.g., 5:4 or 1.25">
+                            </div>
+                        </div>
+
+                        <div class="result-display">
+                            <h3>Results</h3>
+                            <div class="frequency-result">
+                                New Frequency: <span id="resultFreq">660.0</span> Hz
+                            </div>
+                            <div class="ratio-display">
+                                Ratio: <span id="resultRatio">3:2</span>
+                            </div>
+                            <div class="ratio-display">
+                                Decimal: <span id="resultDecimal">1.500</span>
+                            </div>
+                            <div class="ratio-display">
+                                Cents: <span id="resultCents">702</span> ¢
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="controls">
+                        <button class="btn btn-primary" onclick="playTone('base')">Play Base Note</button>
+                        <button class="btn btn-primary" onclick="playTone('result')">Play Result Note</button>
+                        <button class="btn btn-secondary" onclick="playBoth()">Play Both Together</button>
+                        <button class="btn btn-secondary" onclick="stopAll()">Stop All</button>
+                    </div>
+
+                    <canvas id="waveCanvas" class="wave-visualization"></canvas>
+                </div>
+            </div>
+
+            <!-- Common Intervals Table -->
+            <div class="section">
+                <h2>Common Musical Intervals</h2>
+                <table class="intervals-table">
+                    <thead>
+                        <tr>
+                            <th>Interval Name</th>
+                            <th>Ratio</th>
+                            <th>Decimal</th>
+                            <th>Cents</th>
+                            <th>Example (from C)</th>
+                            <th>Play</th>
+                        </tr>
+                    </thead>
+                    <tbody id="intervalsTableBody">
+                        <!-- Table content will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mathematical Explanation -->
+            <div class="section">
+                <h2>The Mathematics Behind Musical Ratios</h2>
+                
+                <div class="explanation-box">
+                    <h4>📐 Frequency Calculation</h4>
+                    <p>To calculate the frequency of a musical interval, multiply the base frequency by the ratio:</p>
+                    <div class="formula">
+                        New Frequency = Base Frequency × (Ratio Numerator ÷ Ratio Denominator)
+                    </div>
+                    <p>For example: 440 Hz × (3÷2) = 440 Hz × 1.5 = 660 Hz</p>
+                </div>
+
+                <div class="explanation-box">
+                    <h4>🎯 Cents Calculation</h4>
+                    <p>Cents provide a logarithmic measure of musical intervals. There are 1200 cents in an octave:</p>
+                    <div class="formula">
+                        Cents = 1200 × log₂(frequency ratio)
+                    </div>
+                    <p>This allows us to compare intervals regardless of the starting frequency.</p>
+                </div>
+
+                <div class="explanation-box">
+                    <h4>🌊 Wave Physics</h4>
+                    <p>When two frequencies have simple ratios, their wave patterns align regularly, creating consonant (pleasant) sounds. Complex ratios create dissonant (tense) sounds because the waves don't align as neatly.</p>
+                </div>
+            </div>
+
+            <!-- Historical Context -->
+            <div class="section">
+                <h2>Historical Context</h2>
+                <p>The relationship between mathematics and music was discovered by ancient Greek philosopher Pythagoras around 500 BCE. He found that pleasing musical intervals corresponded to simple numerical ratios when he experimented with vibrating strings of different lengths.</p>
+                
+                <p>This discovery laid the foundation for:</p>
+                <ul style="margin: 15px 0; padding-left: 30px;">
+                    <li><strong>Just Intonation:</strong> A tuning system based on pure ratios</li>
+                    <li><strong>Equal Temperament:</strong> Modern tuning that slightly adjusts ratios for practical reasons</li>
+                    <li><strong>Harmonic Series:</strong> The natural overtones that give instruments their unique timbres</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Audio context for playing tones
+        let audioContext;
+        let oscillators = [];
+
+        // Initialize audio context
+        function initAudio() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        // Common musical intervals data
+        const intervals = [
+            { name: "Unison", ratio: "1:1", decimal: 1.000, example: "C" },
+            { name: "Minor Second", ratio: "16:15", decimal: 1.067, example: "C#/Db" },
+            { name: "Major Second", ratio: "9:8", decimal: 1.125, example: "D" },
+            { name: "Minor Third", ratio: "6:5", decimal: 1.200, example: "Eb" },
+            { name: "Major Third", ratio: "5:4", decimal: 1.250, example: "E" },
+            { name: "Perfect Fourth", ratio: "4:3", decimal: 1.333, example: "F" },
+            { name: "Tritone", ratio: "7:5", decimal: 1.400, example: "F#/Gb" },
+            { name: "Perfect Fifth", ratio: "3:2", decimal: 1.500, example: "G" },
+            { name: "Minor Sixth", ratio: "8:5", decimal: 1.600, example: "Ab" },
+            { name: "Major Sixth", ratio: "5:3", decimal: 1.667, example: "A" },
+            { name: "Minor Seventh", ratio: "9:5", decimal: 1.800, example: "Bb" },
+            { name: "Major Seventh", ratio: "15:8", decimal: 1.875, example: "B" },
+            { name: "Octave", ratio: "2:1", decimal: 2.000, example: "C" }
+        ];
+
+        // Populate intervals table
+        function populateIntervalsTable() {
+            const tbody = document.getElementById('intervalsTableBody');
+            tbody.innerHTML = '';
+            
+            intervals.forEach((interval, index) => {
+                const cents = Math.round(1200 * Math.log2(interval.decimal));
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${interval.name}</td>
+                    <td>${interval.ratio}</td>
+                    <td>${interval.decimal.toFixed(3)}</td>
+                    <td>${cents}</td>
+                    <td>${interval.example}</td>
+                    <td><button class="play-button" onclick="playInterval('${interval.ratio}')">♪ Play</button></td>
+                `;
+            });
+        }
+
+        // Parse ratio string to decimal
+        function parseRatio(ratioStr) {
+            if (ratioStr.includes(':')) {
+                const [num, den] = ratioStr.split(':').map(Number);
+                return num / den;
+            }
+            return parseFloat(ratioStr);
+        }
+
+        // Calculate and update results
+        function updateResults() {
+            const baseFreq = parseFloat(document.getElementById('baseFreq').value);
+            const customRatio = document.getElementById('customRatio').value.trim();
+            const intervalSelect = document.getElementById('intervalSelect').value;
+            
+            let ratio, ratioStr;
+            
+            if (customRatio) {
+                ratio = parseRatio(customRatio);
+                ratioStr = customRatio;
+            } else {
+                ratio = parseRatio(intervalSelect);
+                ratioStr = intervalSelect;
+            }
+            
+            const newFreq = baseFreq * ratio;
+            const cents = Math.round(1200 * Math.log2(ratio));
+            
+            document.getElementById('resultFreq').textContent = newFreq.toFixed(1);
+            document.getElementById('resultRatio').textContent = ratioStr;
+            document.getElementById('resultDecimal').textContent = ratio.toFixed(3);
+            document.getElementById('resultCents').textContent = cents;
+            
+            drawWaveform(baseFreq, newFreq);
+        }
+
+        // Play a tone at given frequency
+        function playTone(type) {
+            initAudio();
+            stopAll();
+            
+            const baseFreq = parseFloat(document.getElementById('baseFreq').value);
+            const resultFreq = parseFloat(document.getElementById('resultFreq').textContent);
+            
+            let frequency;
+            if (type === 'base') {
+                frequency = baseFreq;
+            } else if (type === 'result') {
+                frequency = resultFreq;
+            }
+            
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+            gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.1);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 2);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + 2);
+            
+            oscillators.push(oscillator);
+        }
+
+        // Play both tones together
+        function playBoth() {
+            initAudio();
+            stopAll();
+            
+            const baseFreq = parseFloat(document.getElementById('baseFreq').value);
+            const resultFreq = parseFloat(document.getElementById('resultFreq').textContent);
+            
+            [baseFreq, resultFreq].forEach(frequency => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(frequency, audioContext.currentTime);
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.15, audioContext.currentTime + 0.1);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 3);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 3);
+                
+                oscillators.push(oscillator);
+            });
+        }
+
+        // Play interval from table
+        function playInterval(ratioStr) {
+            const baseFreq = 440; // A4
+            const ratio = parseRatio(ratioStr);
+            const resultFreq = baseFreq * ratio;
+            
+            initAudio();
+            stopAll();
+            
+            // Play base note first, then interval
+            setTimeout(() => {
+                const oscillator1 = audioContext.createOscillator();
+                const gainNode1 = audioContext.createGain();
+                
+                oscillator1.connect(gainNode1);
+                gainNode1.connect(audioContext.destination);
+                
+                oscillator1.frequency.setValueAtTime(baseFreq, audioContext.currentTime);
+                oscillator1.type = 'sine';
+                
+                gainNode1.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode1.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.05);
+                gainNode1.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+                
+                oscillator1.start(audioContext.currentTime);
+                oscillator1.stop(audioContext.currentTime + 1);
+                
+                oscillators.push(oscillator1);
+                
+                // Play second note after a short delay
+                setTimeout(() => {
+                    const oscillator2 = audioContext.createOscillator();
+                    const gainNode2 = audioContext.createGain();
+                    
+                    oscillator2.connect(gainNode2);
+                    gainNode2.connect(audioContext.destination);
+                    
+                    oscillator2.frequency.setValueAtTime(resultFreq, audioContext.currentTime);
+                    oscillator2.type = 'sine';
+                    
+                    gainNode2.gain.setValueAtTime(0, audioContext.currentTime);
+                    gainNode2.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.05);
+                    gainNode2.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1);
+                    
+                    oscillator2.start(audioContext.currentTime);
+                    oscillator2.stop(audioContext.currentTime + 1);
+                    
+                    oscillators.push(oscillator2);
+                }, 500);
+            }, 100);
+        }
+
+        // Stop all playing tones
+        function stopAll() {
+            oscillators.forEach(osc => {
+                try {
+                    osc.stop();
+                } catch (e) {
+                    // Oscillator might already be stopped
+                }
+            });
+            oscillators = [];
+        }
+
+        // Draw waveform visualization
+        function drawWaveform(freq1, freq2) {
+            const canvas = document.getElementById('waveCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerY = height / 2;
+            
+            // Draw grid
+            ctx.strokeStyle = '#e0e0e0';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 10; i++) {
+                const x = (i / 10) * width;
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, height);
+                ctx.stroke();
+            }
+            
+            ctx.beginPath();
+            ctx.moveTo(0, centerY);
+            ctx.lineTo(width, centerY);
+            ctx.stroke();
+            
+            // Draw waveforms
+            const samples = width;
+            const timeScale = 4; // Show 4 periods of the lower frequency
+            
+            // Base frequency (blue)
+            ctx.strokeStyle = '#3498db';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let i = 0; i < samples; i++) {
+                const x = i;
+                const t = (i / samples) * timeScale;
+                const y = centerY + (height * 0.15) * Math.sin(2 * Math.PI * freq1 * t / freq1);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            
+            // Result frequency (red)
+            ctx.strokeStyle = '#e74c3c';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            for (let i = 0; i < samples; i++) {
+                const x = i;
+                const t = (i / samples) * timeScale;
+                const y = centerY + (height * 0.15) * Math.sin(2 * Math.PI * freq2 * t / freq1);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            
+            // Combined waveform (green)
+            ctx.strokeStyle = '#27ae60';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            for (let i = 0; i < samples; i++) {
+                const x = i;
+                const t = (i / samples) * timeScale;
+                const y1 = (height * 0.1) * Math.sin(2 * Math.PI * freq1 * t / freq1);
+                const y2 = (height * 0.1) * Math.sin(2 * Math.PI * freq2 * t / freq1);
+                const y = centerY + y1 + y2;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            
+            // Legend
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#3498db';
+            ctx.fillText(`Base: ${freq1.toFixed(1)} Hz`, 10, 20);
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillText(`Result: ${freq2.toFixed(1)} Hz`, 10, 35);
+            ctx.fillStyle = '#27ae60';
+            ctx.fillText('Combined', 10, 50);
+        }
+
+        // Event listeners
+        document.getElementById('baseFreq').addEventListener('input', updateResults);
+        document.getElementById('intervalSelect').addEventListener('change', function() {
+            document.getElementById('customRatio').value = '';
+            updateResults();
+        });
+        document.getElementById('customRatio').addEventListener('input', updateResults);
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            populateIntervalsTable();
+            updateResults();
+        });
+
+        // Handle window resize for canvas
+        window.addEventListener('resize', function() {
+            setTimeout(updateResults, 100);
+        });
+    </script>
+</body>
+</html>
